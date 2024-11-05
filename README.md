@@ -11,20 +11,23 @@ This repository contains a MATLAB program to solve the Poisson equation on a squ
 ### Problem Definition
 
 We aim to solve the following Poisson problem:
-$$
+```math
 \Delta u(x, y) = f(x, y), \quad 0 \leq x, y \leq 1,
-$$
+```
 with boundary conditions:
-$$
+
+```math
+\Delta u(x, y) = f(x, y), \quad 0 \leq x, y \leq 1,
+```
 u(0, y) = u(1, y) = u(x, 0) = u(x, 1) = 0, \quad 0 \leq x, y \leq 1.
-$$
 
 ### Discretization Approach
 
 The discretized Laplacian operator is approximated as:
-$$
+
+```math
 \Delta u \approx \frac{u_{i-1, j} + u_{i+1, j} + u_{i, j-1} + u_{i, j+1} - 4u_{i, j}}{h^2},
-$$
+```
 where $$h = \frac{1}{N+1}$$, $$N$$ is the grid size, and $$u_{i, j} = u(ih, jh)$$.
 
 ## Features
