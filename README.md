@@ -82,9 +82,9 @@ The script generates visual outputs, including:
 
 ![Jacobi Method](./images/Jacobi29.png)
 
-### SOR Method with Optimal $$\omega$$ (Grid Size 49)
+### SOR Method with Optimal $$\omega$$ (Grid Size 29)
 
-![SOR Method](./images/SOR49.png)
+![SOR Method](./images/SOR29.png)
 
 ## Applications
 
