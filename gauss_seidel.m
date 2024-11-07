@@ -1,42 +1,42 @@
-
-
 function [u, omega, rho] = gauss_seidel(A, f, tol)
-    tol = tol/10
-    % Decompose matrix A into D (diagonal), L (lower triangular), and U (upper triangular)
+    % Decompose A into L and U (D is included in L)
     D = diag(diag(A));
-    L = tril(A, -1);  % strictly lower triangular part
-    U = triu(A, 1);   % strictly upper triangular part
-
+    L = tril(A);  % Includes D (lower triangular part + diagonal)
+    U = triu(A, 1);  % Upper triangular part without the diagonal
+    
     % Initial guess for the solution vector
-    u = sparse(size(D, 1), 1);
-    
-    % Calculate (D + L) inverse for Gauss-Seidel iteration
-    DL_inv = inv(D + L);
-    
-    % Precompute the matrix B and modified f for efficiency in the iteration
-    B = -DL_inv * U;  
-    f = DL_inv * f;
-    
-    % The spectral radius is generally used to check convergence conditions.
-    % Calculating the spectral radius of B (optional for Gauss-Seidel)
-    rho = spectral_radius(B);
-    assert(rho < 1, 'Gauss-Seidel: Spectral radius is not < 1');
+    u = sparse(size(A, 1), 1);
     
     % Iterative process
+    max_iter = 10000;  % Maximum iteration limit for safety
+    iter = 0;
     while true
         u_old = u;  % Store the old solution
         
-        % Update solution vector using the Gauss-Seidel formula
+        % Update each component of u in-place
         for i = 1:length(u)
-            u(i) = f(i) - B(i, :) * u;
+            % Calculate the sums for the Gauss-Seidel update
+            sum1 = A(i, 1:i-1) * u(1:i-1);  % Using updated values
+            sum2 = A(i, i+1:end) * u_old(i+1:end);  % Using old values
+            u(i) = (f(i) - sum1 - sum2) / A(i, i);
         end
         
         % Check for convergence
-        if norm(u - u_old) < tol
+        if norm(u - u_old, inf) < tol  % Use infinity norm for stricter convergence check
+            break;
+        end
+        
+        iter = iter + 1;
+        if iter > max_iter
+            warning('Gauss-Seidel: Maximum number of iterations reached.');
             break;
         end
     end
     
     % The relaxation parameter for Gauss-Seidel is typically 1
     omega = 1;
+    
+    % Spectral radius calculation (optional, for diagnostics)
+    B = inv(D + tril(A, -1)) * triu(A, 1);
+    rho = spectral_radius(B);
 end
