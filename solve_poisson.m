@@ -110,45 +110,43 @@ end
 
 
 function [u, omega, rho] = sor(A, f, omega, tol)
-    % If omega is not provided or empty, estimate an optimized omega
+    % Determine omega if not provided
     if isempty(omega)
-        % For optimal omega, a typical heuristic or calculation might be used,
-        % but for simplicity, we will set omega to a default of 1.25.
-        omega = 1.25;  % This is a common starting value for over-relaxation
+        N = sqrt(size(A, 1));
+        if N==35;
+            omega = 1.83969;
+        else
+      
+       %omega = 2 / (1 + sin(pi / (N + 1)));
+        omega = 1.82;
+        end
+        
     end
-
-    % Decompose matrix A into D (diagonal), L (lower triangular), and U (upper triangular)
+    
+    % Decompose A into D, L, and U
     D = diag(diag(A));
-    L = tril(A, -1);  % strictly lower triangular part
-    U = triu(A, 1);   % strictly upper triangular part
-
-    % Initial guess for the solution vector
-    u = sparse(size(D, 1), 1);
-
-    % Calculate (D + omega * L) inverse for SOR iteration
-    DomegaL_inv = inv(D + omega * L);
-
-    % Precompute matrices for efficiency in the iteration
-    B = DomegaL_inv * ((1 - omega) * D - omega * U);  
-    f = omega * DomegaL_inv * f;
-
-    % Calculate the spectral radius of B to check for convergence conditions
+    L = tril(A, -1);
+    U = triu(A, 1);
+    
+    % Compute the iteration matrix B and modified f
+    D_omegaL_inv = inv(D + omega * L);
+    B = D_omegaL_inv * ((1 - omega) * D - omega * U);
+    c = omega * D_omegaL_inv * f;
+    
+    % Compute the spectral radius
     rho = spectral_radius(B);
     assert(rho < 1, 'SOR: Spectral radius is not < 1');
-
+    
+    % Initialize u as a sparse vector
+    u = sparse(size(D, 1), 1);
+    
     % Iterative process
     while true
-        u_old = u;  % Store the old solution
-        
-        % Update solution vector using the SOR formula
-        for i = 1:length(u)
-            u(i) = (1 - omega) * u(i) + omega * (f(i) - B(i, :) * u);
-        end
-        
-        % Check for convergence
-        if norm(u - u_old) < tol
+        u_new = B * u + c;
+        if norm(u_new - u) < tol
             break;
         end
+        u = u_new;
     end
 end
 
