@@ -29,7 +29,7 @@ function [u, omega, rho, A] = solve_poisson(f, varargin)
         
     [N,Ncol]=size(f);
     assert(N==Ncol);
-    is_negative=false;
+    is_negative=true;
     A = build_matrix(N, is_negative);
     switch(p.Results.Method)
       case 'Jacobi',
