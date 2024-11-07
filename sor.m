@@ -2,9 +2,6 @@
 function [u, omega, rho] = sor(A, f, omega, tol)
     % Determine omega if not provided
     
-    N = sqrt(size(A, 1));
-        
-    
     omega = 1.82;
     
     % Decompose A into D, L, and U
