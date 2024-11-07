@@ -3,7 +3,7 @@
 
 ![MATLAB](https://img.shields.io/badge/MATLAB-R2023b-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
-
+[![Open in MATLAB Online](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)](https://matlab.mathworks.com/open/github/v1?repo=CuteLoop/Discrete-Poisson)
 ## Overview
 
 This repository contains a MATLAB program to solve the Poisson equation on a square domain $$\Omega = [0, 1] \times [0, 1]$$ with Dirichlet boundary conditions using three iterative methods: **Jacobi**, **Gauss-Seidel**, and **Successive Over-Relaxation (SOR)**. The solution is visualized and verified for correctness, performance, and convergence criteria.
