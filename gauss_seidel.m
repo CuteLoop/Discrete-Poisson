@@ -1,42 +1,29 @@
 function [u, omega, rho] = gauss_seidel(A, f, tol)
-    % Decompose A into L and U (D is included in L)
+    % Decompose A into D, L, and U
     D = diag(diag(A));
-    L = tril(A);  % Includes D (lower triangular part + diagonal)
-    U = triu(A, 1);  % Upper triangular part without the diagonal
+    L = tril(A, -1);
+    U = triu(A, 1);
     
-    % Initial guess for the solution vector
-    u = sparse(size(A, 1), 1);
+    % Compute the iteration matrix B and modified f
+    DL_inv = inv(D + L);
+    B = DL_inv * U;
+    c = DL_inv * f;
+    
+    % Compute the spectral radius
+    rho = spectral_radius(B);
+    assert(rho < 1, 'Gauss-Seidel: Spectral radius is not < 1');
+    
+    % Initialize u as a sparse vector
+    u = sparse(size(D, 1), 1);
     
     % Iterative process
-    max_iter = 10000;  % Maximum iteration limit for safety
-    iter = 0;
     while true
-        u_old = u;  % Store the old solution
-        
-        % Update each component of u in-place
-        for i = 1:length(u)
-            % Calculate the sums for the Gauss-Seidel update
-            sum1 = A(i, 1:i-1) * u(1:i-1);  % Using updated values
-            sum2 = A(i, i+1:end) * u_old(i+1:end);  % Using old values
-            u(i) = (f(i) - sum1 - sum2) / A(i, i);
-        end
-        
-        % Check for convergence
-        if norm(u - u_old, inf) < tol  % Use infinity norm for stricter convergence check
+        u_new = c - B * u;
+        if norm(u_new - u) < tol
             break;
         end
-        
-        iter = iter + 1;
-        if iter > max_iter
-            warning('Gauss-Seidel: Maximum number of iterations reached.');
-            break;
-        end
+        u = u_new;
     end
     
-    % The relaxation parameter for Gauss-Seidel is typically 1
-    omega = 1;
-    
-    % Spectral radius calculation (optional, for diagnostics)
-    B = inv(D + tril(A, -1)) * triu(A, 1);
-    rho = spectral_radius(B);
+    omega = NaN; % Not used in Gauss-Seidel
 end
