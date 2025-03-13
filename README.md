@@ -19,7 +19,7 @@ with boundary conditions:
 ```math
 \Delta u(x, y) = f(x, y), \quad 0 \leq x, y \leq 1,
 ```
-u(0, y) = u(1, y) = u(x, 0) = u(x, 1) = 0, \quad 0 \leq x, y \leq 1.
+$$u(0, y) = u(1, y) = u(x, 0) = u(x, 1) = 0, \quad 0 \leq x, y \leq 1.$$
 
 ### Discretization Approach
 
